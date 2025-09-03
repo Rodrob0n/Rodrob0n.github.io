@@ -407,7 +407,7 @@ afterwhile:                                       ; preds = %condwhile
         const lines = content.split('\n');
         
         lines.forEach((line, i) => {
-            const y = 30 + i * 20;
+            const y = 30 + i * 24; //line height
             if (y > pxH/canvasScale - 20) return; // Don't draw beyond canvas
             
             // Apply syntax highlighting
@@ -813,6 +813,10 @@ class InteractiveGallery extends Project {
     }
     
     create() {
+        this.GalleryGroup = new THREE.Group();
+        const spacing = 3;
+        const count = this.projectConfigs.length;
+        const start = - ((count-1) * spacing) / 2;
         // Create a gallery of interactive cubes representing projects
         this.projectConfigs.forEach((config, i) => {
             // Create geometry and material
@@ -825,7 +829,7 @@ class InteractiveGallery extends Project {
             
             // Create mesh
             const cube = new THREE.Mesh(geometry, material);
-            cube.position.x = (i - 2) * 3; // Spread them out more
+            cube.position.x = start + i * spacing; // Spread them out more
             cube.position.y = 0;
             cube.position.z = 0;
             
@@ -837,15 +841,16 @@ class InteractiveGallery extends Project {
             this.createLabel(cube, config);
             
             // Add to scene
-            this.addObject(cube);
+            this.GalleryGroup.add(cube);
             this.makeInteractive(cube);
             this.cubes.push(cube);
         });
         
         // Add a title
         this.createTitle();
-        
+        this.addObject(this.GalleryGroup);
         console.log(`${this.config.name}: Created ${this.cubes.length} project cubes`);
+        this.GalleryGroup.position.set(0,0,0);
     }
     
     createLabel(cube, config) {
@@ -1025,7 +1030,7 @@ class InteractiveGallery extends Project {
     }
 }
 
-export default InteractiveGallery;
+//export default InteractiveGallery;
 
 
 class DissProject extends Project {

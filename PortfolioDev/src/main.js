@@ -13,7 +13,17 @@ let isScrolling = false;
 // Project management
 const projects = new Map();
 let projectManager = null;
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+}
 
+window.addEventListener('resize', onWindowResize, false);
+
+
+// Also force once at the end of init():
 // Initialize Three.js
 function init() {
     console.log('Starting initialization...');
@@ -33,7 +43,8 @@ function init() {
     
     // Initialize Three.js components
     scene = new THREE.Scene();
-    
+    //const axesHelper = new THREE.AxesHelper(5);
+    //scene.add(axesHelper);
     // Camera
     const width = canvasContainer.clientWidth;
     const height = canvasContainer.clientHeight;
@@ -44,7 +55,8 @@ function init() {
 
 
     camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    renderer.setSize(width, height, false);    camera.position.z = 5;
+    renderer.setSize(width, height, false);    
+    camera.position.z = 5;
     
 
     canvasContainer.appendChild(renderer.domElement);
@@ -74,6 +86,8 @@ function init() {
             showSection(0);
         }
     }, 1000);
+
+    onWindowResize(); // Ensure correct sizing after everything is set up
 }
 
 // Initialize all projects
@@ -220,6 +234,7 @@ function addBackToNavigatorButton(){
 
 // Setup all event listeners
 function setupEventListeners() {
+    const container = document.getElementById('canvas-container'); 
     // Smooth scroll handling
     let scrollTimeout;
     window.addEventListener('wheel', (e) => {
@@ -256,9 +271,11 @@ function setupEventListeners() {
     window.addEventListener('resize', () => {
         if (!camera || !renderer) return;
         
-        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(container.clientWidth, container.clientHeight, false);
+        renderer.domElement.style.width = `${container.clientWidth}px`;
+        renderer.domElement.style.height = `${container.clientHeight}px`;
     });
     
     // Intersection Observer for fade-in animations
@@ -384,11 +401,13 @@ function updateSceneForSection(index) {
             camera.position.set(0, 0, 3);
             // Maybe show a simple rotating logo or something
             break;
-            
+            //
         case 2: // Projects
             camera.position.set(0, 0, 7);
             // Show the interactive gallery
             showProject('project-navigator');
+            //camera.lookAt(0, 0, 0);
+
             break;
             
         case 3: // Contact
