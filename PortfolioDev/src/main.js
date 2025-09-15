@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import Project from './projects/projects.js';
-import {InteractiveGallery, ParticleSystem, CompilerProject, DissProject} from './projects/ExampleProjects.js';
+import {InteractiveGallery, ParticleSystem, CompilerProject, DissProject,SignLanguageProject, CompPhysics, ThreeJSGameProject} from './projects/ExampleProjects.js';
 
 // Global variables
 let scene, camera, renderer;
@@ -112,8 +112,14 @@ async function initializeProjects() {
         const compilerProject = new CompilerProject(scene, camera ,renderer)
         projects.set('compiler-project',compilerProject)
         
-        const dissProject = new DissProject(scene, camera, renderer)
+        const dissProject = new SignLanguageProject(scene, camera, renderer)
         projects.set('diss-project', dissProject)
+
+        const threeJSGameProject = new ThreeJSGameProject(scene, camera, renderer)
+        projects.set('threejs-game-project', threeJSGameProject)
+
+        const compPhysicsProject = new CompPhysics(scene, camera, renderer)
+        projects.set('comp-physics-project', compPhysicsProject)
 
         const interactiveGallery = new InteractiveGallery(scene, camera, renderer, projects);
 
@@ -168,16 +174,16 @@ function addBackToNavigatorButton(){
     backBtn.innerHTML = '<- Back to Project Gallery';
     backBtn.style.cssText = `
         position: fixed;
-        top: 100px;
-        left: 30px;
-        z-index: 200;
-        background: rgba(0, 0, 0, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 14px;
+    top: 3vh;        /* 3% of viewport height from top */
+    left: 3vw;       /* 5% of viewport width from left */
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.8em 1.2em;  /* scale with font size */
+    cursor: pointer;
+    border-radius: 0.5em;
+    font-size: 1rem;
         transition: all 0.3s ease;
     `;
     backBtn.addEventListener('mouseenter', () => {
@@ -222,7 +228,7 @@ function addBackToNavigatorButton(){
         backBtn.remove();
         
         // Reset camera for navigator view
-        camera.position.set(0, 0, 10);
+        camera.position.set(0, 0, 7);
         }, 100);
     });
     

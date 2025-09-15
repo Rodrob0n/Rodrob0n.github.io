@@ -52,6 +52,37 @@ class Project {
         // Initialize the project
         this.init();
     }
+
+// In your base Project class (projects.js)
+// To make bright images more readable increase contrast and slightly decrease brightness
+createContrastMaterial(texture, contrast = 1.5, brightness = -0.05) {
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            map: { value: texture },
+            contrast: { value: contrast },
+            brightness: { value: brightness }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform sampler2D map;
+            uniform float contrast;
+            uniform float brightness;
+            varying vec2 vUv;
+            
+            void main() {
+                vec4 color = texture2D(map, vUv);
+                color.rgb = ((color.rgb - 0.5) * contrast) + 0.5 + brightness;
+                gl_FragColor = color;
+            }
+        `
+    });
+}
     
     /**
      * Initialize the project - called automatically
